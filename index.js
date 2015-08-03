@@ -1,3 +1,10 @@
-var treeframe = require('./src/frame');
+var TreeFrame = require('./src/treeFrame');
+var NetFrame = require('./src/netFrame');
 
-module.exports = treeframe;
+window.TreeFrame = TreeFrame;
+window.NetFrame = NetFrame;
+
+module.exports = {
+	TreeFrame : TreeFrame,
+	NetFrame : NetFrame
+};

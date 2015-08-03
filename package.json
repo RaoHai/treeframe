@@ -16,7 +16,9 @@
   "spm": {
     "main": "index.js",
     "dependencies": {
-      "g-util": "~1.0.6"
+      "g-util": "~1.0.6",
+      "lodash": "~3.7.0",
+      "g-base": "~1.0.0"
     },
     "devDependencies": {
       "expect.js": "0.3.1"
