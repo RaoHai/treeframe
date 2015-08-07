@@ -4,7 +4,7 @@
 
 Spider 在设置数据源之后，会将数据转换成 `Frame`， 一个数据集合包括以下部分
 
-1. dataFrame : 数据源的集合
+1. dataFrame : 数据帧
 2. treeSet / netSet : 结构化的数据。
 
 frame 在选择行、列，形成新的frame之后，也会形成相应的 treeSet 和 netSet 。
