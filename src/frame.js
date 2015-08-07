@@ -1,33 +1,25 @@
 var Util = require('g-util');
 var Base = require('g-base');
 var _ = require('lodash');
-var Node = require('./node');
 
-
+/**
+ * 因为是层次型数据，所以数据里必须有id
+ * 
+ */
 function Frame (data, cfg) {
-	Frame.superclass.constructor.call(this, cfg);
 	this.data = data;
-	
-	this.nodes = [];
-	this.nodeMap = {};
-	this.edgeMap = {};
-	this.adjoinTable = {};
-    this.reverseTable = {};
-	
+	Util.mix(this, cfg);
 	this.source(data);
-}
-
-var infix = "__->__";
-
-var edgeId = function (source, target) {
-	return source + infix + target;
 }
 
 Util.extend(Frame, Base);
 
+
 Util.augment(Frame, {
+	type : 'Frame',
 	/**
-	 * source 
+	 * 加载数据
+	 * @param {Array} 数据集合
 	 */
 	source : function (data) {
 		if (!data.nodes || !data.edges) {
@@ -35,118 +27,76 @@ Util.augment(Frame, {
 		}
 		
 		var self = this;
+		var names = self.colNames();
 		
-		// this._initNodes(data.nodes);
-		_.each(data.nodes, function (node) {
-			self.addNode(node);
-		});
+		var arr = self.getArr(names);
+		console.log(">> arr:", arr);
 		
-		_.each(data.edges, function (edge) {
-			self.addEdge(edge);
-		});
-		
-		console.log("nodes", this.nodeMap);
-		console.log("edges", this.edgeMap);
-		// this._initEdges(data.edges);
 	},
 	
-	addNode : function (nodeData) {
-		var node = new Node(nodeData);
-		node.set('frame', this);
-		
-		this.nodes.push(node);
-		this.nodeMap[node.get('id')] = node;
-	},
-	
-	addEdge : function (edge) {
+	colNames : function () {
 		var self = this;
 		
-		var source = self.nodeMap[edge.source];
-		if (!source) return;
-		edge.sourceNode = source;
+		var names = self.names;
+		if (!names) {
+			names = _.keys(self.data.nodes[0]);
+			self.names = names;
+		}
 		
-		var target = self.nodeMap[edge.target];
-		if (!target) return;
-		edge.targetNode = target;
+		if (names.indexOf('id') == -1) {
+			names.unshift('id');
+		}
 		
-		source.get('out').push(edge);
-		target.get('in').push(edge);
+		return names;
+	},
+	
+	getArr : function (names) {
+		var self = this,
+			data = self.data,
+			arr = [];
+		_.each(names, function (name) {
+			arr.push(data.nodes.map(function (node) {
+				return node[name];
+			}))
+		});
 		
-		var id = edgeId(edge.source, edge.target);
+		self.arr = arr;
+		return arr;
+	},
+	
+	cols : function (names) {
+		var self = this;
+		
+		if (names.indexOf('id') == -1) {
+			names.unshift('id');
+		}
+		
+		for (var i = 0; i < names.length; i++) {
+			var name = names;
+			if (Util.isNumber(name)) {
+				names[i] = self.names[name];
+			}
+		}
 
-		edge.id = id;
-		self.edgeMap[id] = edge;
-		self.adjoinTable[id] = edge;
-		self.reverseTable[id] = edge;
-	},
-	
-	setDegree : function () {
-		var self = this;
-		_.forEach(this.edgeMap, function (n, key) {
-			self.getById(key).set('degree', n.length);
+		var nodes = _.map(self.data.nodes, function (d) {
+			var obj = {};
+			for (var i = 0 ; i < names.length ; i++) {
+				var name = names[i];
+				obj[name] = d[name];
+			}
+			return obj;
+		})
+		
+		return new Frame({
+			nodes : nodes,
+			edges : self.data.edges
 		});
 	},
 	
-	getOut : function (edge) {
-		var node = edge.targetNode,
-			self = this;
-		if (!node) return;
-		
-		return _.map(node.out, function (n) {
-			return self.nodeMap[n.target];
-		});
-	},
-	
-	getById : function (id) {
-		var self = this;
-		
-		if (Util.isArray(id)) {
-			return _.map(id, function (i) {
-				return self.nodeMap[i];
-			});
-		} 
-		return this.nodeMap[id];	
-	},
-	
-	getRoots : function () {
-		// var self = this;
-		return _.filter(this.nodes, function (node) {
-			return node.get('in').length === 0;
-		});
-	},
-	
-	getNodes : function () {
-		return this.nodes;
-	},
-	
-	getLeaf : function () {
-		return this.select({degree : 0});
-	},
-	
-	/**
-	 * 条件选择节点
-	 */
-	select : function (condition) {
-		if (typeof condition === 'string') {
-			condition = {id : condition};
-		}
-		
-		if (typeof condition === 'function') {
-			return _.filter(this.nodes, condition);
-		} else {
-			var keys = _.keys(condition);
-			return _.filter(this.nodes, function (node) {
-				// console.log()
-				return keys.map(function (key) {
-					return node.get(key) == condition[key];
-				}).reduce(function (prev, curr) {
-					return prev && curr;
-				});
-			})
-		}
-	},
-	
-	
+	toArray : function () {
+		return this.arr;
+	}
+
 });
-
 module.exports = Frame;
+

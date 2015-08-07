@@ -13,7 +13,6 @@ Util.extend(Node, Base);
 
 Util.augment(Node, {
 	parent : function () {
-		
 		return _.map(this.get('in'), function (n) {
 			return n.sourceNode;
 		});

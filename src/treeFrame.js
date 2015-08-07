@@ -1,91 +1,56 @@
 var Util = require('g-util');
 var _ = require('lodash');
 var Frame = require('./frame');
+var TreeSet = require('./treeSet');
 
 function TreeFrame (data, cfg) {
-	TreeFrame.superclass.constructor.call(this, data, cfg);
+	
+	if (data.type && data.type === 'Frame') {
+		this.data = data.data;
+		this.dataFrame = data;
+	} else {
+		this.data = this.source(data);
+		this.dataFrame = new Frame(this.data, cfg);
+	}
+	this.treeSet = new TreeSet(this.dataFrame);
 }
 
-Util.extend(TreeFrame, Frame);
 
 Util.augment(TreeFrame, {
-	/**
-	 * 树类型数据
-	 */
+	
 	source : function (data) {
-		var self = this;
-		
+		var edges = [];
 		if (Util.isArray(data)) {
-			_.each(data , function (d) {
-				self.addNode(d);
+
+			_.each(data, function (d) {
+				if (d.parent) {
+					edges.push({
+						source : d.parent,
+						target : d.id
+					});
+				}
 			});
 		}
 		
-		self.makeTree();
-		
+		return {
+			nodes : data,
+			edges : edges
+		};
 	},
 	
-	makeTree : function () {
+	cols : function (names) {
 		var self = this;
-		
-		_.each(this.nodeMap, function (node) {
-			self.addEdge({source : node.get('parent'), target : node.get('id')});
-		})
-			
-		this.roots = this.getRoots();
-	},
-	/**
-	 * 获取某节点的`祖先`节点，以数组返回
-	 */
-	getAncestor : function (node) {
-		
-		if (node.length) node = node[0];
-		var n = node, ancestors = [];
-		console.log(n);
-		while(n && n.parent()) {
-			var _n = n.parent()[0];
-			if (!_n) break;
-			ancestors.push(_n);
-			n = _n;	
-		}
-		
-		return ancestors;
-	},
-
-	/**
-	 * 获取某节点的 `子孙` 节点，以数组返回
-	 */
-	getDescendant : function (node) {
-		if (node.length) node = node[0];
-		var descendant = [];
-		
-		var walk = function (n) {
-			if (n.children()) {
-				descendant = _(descendant).concat(n.children()).value();
-				_.each(n.children(), walk);
-			}
-		}
-		
-		walk(node);
-		return descendant;
+		//id永远有。
+		return new TreeFrame(self.dataFrame.cols(names));
 	},
 	
-	/**
-	 * 获取兄弟节点。不包含本身
-	 */
-	siblings: function (node) {
-		if (node.length) node = node[0];
-		var parent = node.parent(), siblings = [];
-		
-		_.each(parent, function (node) {
-			 siblings = _(siblings).concat(node.children()).value();
-		});
-		
-		return _.filter(siblings, function (sibling) {
-			return sibling.get('id') !== node.get('id');
-		});
+	
+	colArray : function (names) {
+		if (!Util.isArray(names)) names = [names];
+		//0永远是id，所以取1
+		return this.dataFrame.cols(names).toArray()[1];
 	}
-	
 });
+
 
 module.exports = TreeFrame;
