@@ -6,6 +6,7 @@ var Node = require('./node');
 function TreeSet (dataFrame) {
 	this.dataFrame = dataFrame;
 	this.nodes = [];
+	this.edges = [];
 	this.nodeMap = {};
 	this.edgeMap = {};
 	this.adjoinTable = {};
@@ -62,6 +63,7 @@ Util.augment(TreeSet, {
 		var id = edgeId(edge.source, edge.target);
 
 		edge.id = id;
+		self.edges.push(edge);
 		self.edgeMap[id] = edge;
 		self.adjoinTable[id] = edge;
 		self.reverseTable[id] = edge;

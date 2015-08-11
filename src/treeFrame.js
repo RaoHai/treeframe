@@ -49,8 +49,76 @@ Util.augment(TreeFrame, {
 		if (!Util.isArray(names)) names = [names];
 		//0永远是id，所以取1
 		return this.dataFrame.cols(names).toArray()[1];
+	},
+	
+	/**
+	 * 行数
+	 */
+	rowCount : function () {
+		if (!this.dataFrame) return 0;
+		var arr = this.dataFrame.arr;
+		return arr && arr.length && arr[0].length || 0;	
+	},
+	
+	/**
+	 * 获取对象
+	 */
+	_getObject : function (index, names) {
+		var self = this;
+	    var arr = self.dataFrame.arr;
+	    var obj = {};
+	
+	    names = names || self.dataFrame.colNames();
+	
+	    for (var i = 0;i < names.length;i++) {
+	      obj[names[i]] = arr[i][index];
+	    }
+		
+	    return obj;
+	},
+	
+	/**
+	 * 获取对应names 列的JSON对象构成的数组
+	 */
+	toJSON : function () {
+		var self = this;
+		var rowCount = self.rowCount();
+		var rst = [];
+		
+		console.log(">> rowCount", rowCount);
+		for (var i = 0 ; i < rowCount; i++) {
+			rst.push(self._getObject(i));
+		}
+		return rst;
 	}
 });
 
+/**
+ * statics functions
+ */
+TreeFrame.forceMerge = function () {
+	var frameArray = Util.toArray(arguments);
+	var names = [];
+	var data = [];
+	
+	_.each(frameArray, function (frame) {
+		var frameData = frame.dataFrame;
+	
+		var subNames = frameData.colNames();
+		
+		_.each(subNames, function (name) {
+			if (names.indexOf(name) === -1) {
+				names.push(name);
+			}
+		});
+		
+		var jsonArray = frame.toJSON();
+		data = data.concat(jsonArray);		
+	});
+	
+	return new TreeFrame(data, {
+		names : names
+	});
+}
 
 module.exports = TreeFrame;

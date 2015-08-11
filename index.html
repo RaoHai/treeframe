@@ -8,38 +8,42 @@
 		var data  = [{"id":"85","strategyId":9010,"text":"收银台错误日志(85)"},{"id":"86","strategyId":9010,"parent":"51","text":"支付推进处理日志(86)"},{"id":"77","strategyId":9010,"parent":"76","text":"完成支付失败包含积分详细信息(77)"},{"id":"60","strategyId":9010,"parent":"53","text":"阶段充值回执信息有无(60)"},{"id":"61","strategyId":9010,"parent":"60","text":"阶段充值回执信息结果(61)"},{"id":"65","strategyId":9010,"parent":"61","text":"抓取充值回执错误码(65)"},{"id":"66","strategyId":9010,"parent":"65","text":"分流回执错误信息(66)"},{"id":"67","strategyId":9010,"parent":"66","text":"分流回执错误日志(67)"},{"id":"53","strategyId":9010,"parent":"52","text":"支付工具(53)"},{"id":"75","strategyId":9010,"parent":"73","text":"支付分流结果日志(75)"},{"id":"57","strategyId":9010,"parent":"54","text":"管控失败详细信息(57)"},{"id":"58","strategyId":9010,"parent":"54","text":"错误码详细信息(58)"},{"id":"59","strategyId":9010,"parent":"54","text":"参数不合法详细信息(59)"},{"id":"76","strategyId":9010,"parent":"70","text":"完成支付失败包含积分支付工具(76)"},{"id":"73","strategyId":9010,"parent":"53","text":"分流回执结果(73)"},{"id":"68","strategyId":9010,"parent":"65","text":"分流回执未知错误信息(68)"},{"id":"69","strategyId":9010,"parent":"68","text":"分流回执未知错误日志(69)"},{"id":"63","strategyId":9010,"parent":"61","text":"完成支付信息(63)"},{"id":"70","strategyId":9010,"parent":"63","text":"完成支付失败抓取错误码(70)"},{"id":"52","strategyId":9010,"parent":"51","text":"预创建是否成功(52)"},{"id":"71","strategyId":9010,"parent":"70","text":"完成支付失败包含账务支付工具(71)"},{"id":"72","strategyId":9010,"parent":"71","text":"完成支付失败包含账务详细信息(72)"},{"id":"74","strategyId":9010,"parent":"73","text":"完成支付信息(74)"},{"id":"54","strategyId":9010,"parent":"52","text":"抓取错误码(54)"},{"id":"51","strategyId":9010,"parent":"85","text":"支付摘要日志信息(51)"},{"id":"56","strategyId":9010,"parent":"54","text":"错误码详细信息(56)"},{"id":"87","strategyId":9010,"parent":"86","text":"余额宝核心错误日志(87)"},{"id":"89","strategyId":9010,"parent":"75","text":"查询交易退款摘要日志(89)"},{"id":"99","strategyId":9010,"parent":"54","text":"查询金融日志(99)"}];
 		
 		var treeFrame = new TreeFrame(data);
-		var treeSet = treeFrame.treeSet;
+		// var treeSet = treeFrame.treeSet;
 		
-		console.log(">> treeFrame.data:", treeFrame.dataFrame);
-		console.log(">> treeFrame.treeSet:", treeSet);
+		// console.log(">> treeFrame.data:", treeFrame.dataFrame);
+		// console.log(">> treeFrame.treeSet:", treeSet);
 		
-		console.log(">> 树的全部节点:", treeSet.getNodes());
-		console.log(">> 树的根节点:", treeSet.getRoots())
-		console.log(">> 树的叶节点:", treeSet.getLeaf());
-		console.log(">> 选择一个节点:", treeSet.select({id: "86"}));
+		// console.log(">> 树的全部节点:", treeSet.getNodes());
+		// console.log(">> 树的根节点:", treeSet.getRoots())
+		// console.log(">> 树的叶节点:", treeSet.getLeaf());
+		// console.log(">> 选择一个节点:", treeSet.select({id: "86"}));
 		
-		var n = treeSet.select("86");
-		console.log(">> 选择节点n的兄弟节点:", treeSet.siblings(n));
-		console.log(">> 选择节点n的祖先节点:", treeSet.getAncestor(n));
-		console.log(">> 选择节点n的子孙节点:", treeSet.getDescendant(n));
-		console.log("=========");
-		//指定字段名:
-		var nframe = new TreeFrame(data, {
-			names : ['strategyId']
-		});
+		// var n = treeSet.select("86");
+		// console.log(">> 选择节点n的兄弟节点:", treeSet.siblings(n));
+		// console.log(">> 选择节点n的祖先节点:", treeSet.getAncestor(n));
+		// console.log(">> 选择节点n的子孙节点:", treeSet.getDescendant(n));
+		// console.log("=========");
+		// //指定字段名:
+		// var nframe = new TreeFrame(data, {
+		// 	names : ['strategyId']
+		// });
 		
-		console.log(">> 指定字段Id.data", nframe.dataFrame);
-		console.log(">> 指定字段Id.treeSet", nframe.treeSet);
+		// console.log(">> 指定字段Id.data", nframe.dataFrame);
+		// console.log(">> 指定字段Id.treeSet", nframe.treeSet);
 		
-		console.log("===========");
-		var cframe = treeFrame.cols(['strategyId']);
-		console.log(">>由frame生成新集合.data", cframe.dataFrame);
-		console.log(">> 由frame生成新集合.treeSet", cframe.treeSet);
+		// console.log("===========");
+		// var cframe = treeFrame.cols(['strategyId']);
+		// console.log(">>由frame生成新集合.data", cframe.dataFrame);
+		// console.log(">> 由frame生成新集合.treeSet", cframe.treeSet);
 		
-		console.log("======");
-		console.log(">> colArray", treeFrame.colArray('strategyId'));
+		// console.log("======");
+		// console.log(">> colArray", treeFrame.colArray('strategyId'));
 		
+		console.log(">> toJSON", treeFrame.toJSON());
+		
+		console.log(">> forceMerge:", TreeFrame.forceMerge(treeFrame));
 
+		
 	</script>
 
 </html>

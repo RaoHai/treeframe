@@ -7,6 +7,10 @@ function Node (data) {
 	this.set('in', []);
 	this.set('out', []);
 	this.set('degree', 0);
+	
+	this.expand = true;
+	this.__w = 5;
+    this.__h = 5;
 }
 
 Util.extend(Node, Base);
@@ -27,6 +31,15 @@ Util.augment(Node, {
 	
 	source : function () {
 		// return _.map(this.get('in'))
+	},
+	
+	_update : function (cfg) {
+        Util.mix(true, this._attrs, cfg);
+    },
+	
+	_afterLayout : function (x, y) {
+		this.set('x', x);
+		this.set('y', y);
 	}
 });
 
