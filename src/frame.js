@@ -64,6 +64,21 @@ Util.augment(Frame, {
 		return arr;
 	},
 	
+	/**
+	 * 获取单元格数据
+	 */
+	cell : function (rowIndex, colIndex) {
+		var self = this;
+		var names = self.colNames();
+		var arr = self.arr;
+		
+		if (Util.isString(colIndex)) {
+			colIndex = names.indexOf(colIndex);
+		}
+		
+		return arr[colIndex] ? arr[colIndex][rowIndex] : undefined;
+	},
+	
 	cols : function (names) {
 		var self = this;
 		
