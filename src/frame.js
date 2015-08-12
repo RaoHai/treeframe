@@ -2,6 +2,19 @@ var Util = require('g-util');
 var Base = require('g-base');
 var _ = require('lodash');
 
+function formatArray(data){
+  var arr = [];
+  Util.each(data,function(sub){
+    if(Util.isArray(sub)){
+      arr = arr.concat(sub);
+    }else{
+      arr.push(sub);
+    }
+  });
+  return arr;
+}
+
+
 /**
  * 因为是层次型数据，所以数据里必须有id
  * 
@@ -11,6 +24,7 @@ function Frame (data, cfg) {
 	Util.mix(this, cfg);
 	this.source(data);
 }
+
 
 Util.extend(Frame, Base);
 
@@ -113,5 +127,36 @@ Util.augment(Frame, {
 	}
 
 });
+
+Util.mix(Frame, {
+	values : function (frame, x) {
+		var col = frame.col(x),
+			rst = [],
+			count = col.rowCount();
+			
+		for (var i = 0 ; i < count; i++) {
+			var value = col.cell(i, 0);
+			if (value !== undefined && rst.indexOf(value) === -1) {
+				rst.push(value);
+			}
+		}
+		return rst;	
+	},
+	
+	min : function (frame, x) {
+		var arr = frame.colArray(x);
+		arr = formatArray(arr);
+		
+		return _.min(arr);
+	},
+	
+	max : function (frame, x) {
+		var arr = frame.colArray(x);
+		arr = formatArray(arr);
+		
+		return _.max(arr);
+	}
+})
+
 module.exports = Frame;
 
