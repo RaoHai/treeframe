@@ -46,6 +46,8 @@ Util.augment(TreeFrame, {
 						source: d.parent,
 						target: d.id
 					});
+				} else {
+					d.parent = -1;
 				}
 			});
 		}
@@ -115,7 +117,6 @@ Util.augment(TreeFrame, {
 		var rowCount = self.rowCount();
 		var rst = [];
 
-		console.log(">> rowCount", rowCount);
 		for (var i = 0; i < rowCount; i++) {
 			rst.push(self._getObject(i));
 		}
@@ -141,19 +142,42 @@ Util.augment(TreeFrame, {
 
 Util.mix(TreeFrame, {
 	values: function (frame, x) {
-		var col = frame.col(x),
-			rst = [],
-			count = col.rowCount();
-
-		for (var i = 0; i < count; i++) {
-			var value = col.cell(i, 0);
-			if (value !== undefined && rst.indexOf(value) === -1) {
-				rst.push(value);
-			}
-		}
-		return rst;
+		var col = frame.col(x);
+		
+		return col[0];
 	},
 	
+	combin : function () {
+		var frameArray = Util.toArray(arguments);
+		var names = [];
+		var data = [];
+		
+		_.each(frameArray, function (frame) {
+			names = names.concat(frame.dataFrame.colNames());
+			data = data.concat(frame.dataFrame.toArray())
+		});
+		
+		var data = TreeFrame.combineArrAndNames(data, names);
+		
+		return new TreeFrame(data);
+	},
+	
+	combineArrAndNames : function (arr, names) {
+		var data = [];
+		var length = arr[0].length;
+		var keys = arr.length;
+		
+		for (var i = 0 ; i < length; i ++) {
+			var obj = {};
+			for (var j = 0 ; j < keys; j++) {
+				obj[names[j]] = arr[j][i];
+			}
+			
+			data.push(obj);
+		}
+		
+		return data;
+	},
 	forceMerge: function () {
 		var frameArray = Util.toArray(arguments);
 		var names = [];

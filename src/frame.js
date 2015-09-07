@@ -14,6 +14,11 @@ function isNull(value) {
  */
 function Frame(data, cfg) {
 	this.data = data;
+	
+	if (cfg && cfg.names && cfg.names.indexOf('parent') === -1) {
+		cfg.names.push('parent');
+	}
+
 	Util.mix(this, cfg);
 	this.source(data);
 }
@@ -37,7 +42,7 @@ Util.augment(Frame, {
 		var names = self.colNames();
 
 		var arr = self.getArr(names);
-		console.log(">> arr:", arr);
+		self.arr = arr;
 
 	},
 
@@ -67,7 +72,6 @@ Util.augment(Frame, {
 			}))
 		});
 
-		self.arr = arr;
 		return arr;
 	},
 
@@ -92,7 +96,32 @@ Util.augment(Frame, {
 
 		return rst;
 	},
-  
+  	
+	toJSON: function () {
+		var self = this;
+		var rowCount = self.rowCount();
+		var rst = [];
+
+		for (var i = 0; i < rowCount; i++) {
+			rst.push(self._getObject(i));
+		}
+		return rst;
+	},
+	
+	_getObject: function (index, names) {
+		var self = this;
+		var arr = self.arr;
+		var obj = {};
+
+		names = names || self.colNames();
+
+		for (var i = 0; i < names.length; i++) {
+			obj[names[i]] = arr[i][index];
+		}
+
+		return obj;
+	},
+	
 	/**
 	 * 行数
 	 */

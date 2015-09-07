@@ -98,7 +98,6 @@ Util.augment(TreeSet, {
 		} else {
 			var keys = _.keys(condition);
 			return _.filter(this.nodes, function (node) {
-				// console.log()
 				return keys.map(function (key) {
 					return node.get(key) == condition[key];
 				}).reduce(function (prev, curr) {

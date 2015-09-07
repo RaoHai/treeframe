@@ -40,7 +40,28 @@ Util.augment(Node, {
 	_afterLayout : function (x, y) {
 		this.set('x', x);
 		this.set('y', y);
+	},
+	
+	getSize : function () {
+        var factory = this.get('factory');
+        return factory && factory.getSize(this.get('size'));
+    },
+	
+	getPosition : function () {
+		var factory = this.get('factory');
+        return factory && factory.getPosition(this.get('position'));
+	},
+	
+	getColor : function () {
+		var factory = this.get('factory');
+        return factory && factory.getColor(this.get('color'));
+	},
+	
+	getShape : function () {
+		var factory = this.get('factory');
+        return factory && factory.getShape(this.get('shape'));
 	}
+	
 });
 
 module.exports = Node;
